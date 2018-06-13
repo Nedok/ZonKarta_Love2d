@@ -1,6 +1,6 @@
-local flux = require "flux\\flux"
+-- local flux = require "flux\\flux"
 local SideDrawer = require "SideDrawer"
-local Dirty = require "Dirty"
+-- local Dirty = require "Dirty"
 local MovableMap = require "MovableMap"
 local print_r = require "print_r"
 
@@ -39,7 +39,7 @@ Scroll = {x = 0, y = 0}
 MuseText = ""
 
 function love.update(dt)
-    flux.update(dt)
+--    flux.update(dt)
 
     MovableMap.update()
 
