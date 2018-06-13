@@ -39,20 +39,13 @@ end
 
 
 
-function MovableMap.load(ImagePath, Boxes)
+function MovableMap.load(ImagePath, BoxPixSize, BoxCount)
 
-    MovableMap.GridNumber = Dirty.StandardizeTableXY( Boxes or {x=3240/27, y=2514/21} )
+    MovableMap.GridPixSize = Dirty.StandardizeTableXY( BoxPixSize or {x=3240/27, y=2514/21} )
+    MovableMap.GridNumber  = Dirty.StandardizeTableXY( BoxCount   or {x=30, y=20} )
 
     MovableMap.MapImage = love.graphics.newImage("zon.jpg")
     MovableMap.MapImageSize = Dirty.StandardizeTableXY({MovableMap.MapImage:getWidth(), MovableMap.MapImage:getHeight()})
-
-
-    for i=0,2000000000 do
-        print(i, IndexToLetter(i))
-    end
-
-
-
 end
 
 
@@ -90,7 +83,7 @@ function MovableMap.update()
     -- print(love.timer.getFPS( ))
 end
 
-
+MovableMap.Temp = ""
 function MovableMap.draw()
     local TempColor = {love.graphics.getColor()}
     love.graphics.setColor(255,255,255)
@@ -103,6 +96,8 @@ function MovableMap.draw()
         MovableMap.Zoom,
         MovableMap.Zoom
     )
+
+    love.graphics.print("Spot: " .. MovableMap.Temp , 100, 100)
 
     -- love.graphics.setColor(255,255,255, 0.3)
     -- love.graphics.draw(
@@ -154,11 +149,21 @@ function MovableMap.mousepressed(x, y, button, isTouch)
 
     local B = Dirty.SubXY({["x"]=x, ["y"]=y}, A)
 
-    local C = Dirty.MultXY(B, Z)
+    local C = Dirty.DivXY(B, Z)
 
-    local D = Dirty.DivXY(C, MovableMap.GridNumber)
+    print(C.x, C.y)
 
-    D.x, D.y = math.ceil(D.x), math.ceil(D.y)
+    local D = Dirty.DivXY(C, MovableMap.GridPixSize)
+
+    D.x, D.y = math.ceil(D.x), math.floor(D.y)
+
+    if Dirty.InRangeXY(D, {x=1, y=0}, MovableMap.GridNumber) then
+        MovableMap.Temp = IndexToLetter(D.y) .. D.x
+
+    else
+        MovableMap.Temp =""
+    end
+
 
     print(D.x, IndexToLetter(D.y), D.y)
 

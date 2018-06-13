@@ -47,6 +47,17 @@ function Me.DivXY (T1, T2)
     return {x = Temp1.x / Temp2.x, y = Temp1.y / Temp2.y}
 end
 
+
+-- Function will compare [] including edges
+function Me.InRangeXY(Value, LowBound, TopBound)
+    Value    = StandardizeTableXY(Value)
+    LowBound = StandardizeTableXY(LowBound)
+    TopBound = StandardizeTableXY(TopBound)
+
+    return ( Value.x >= LowBound.x and Value.x <= TopBound.x ) and ( Value.y >= LowBound.y and Value.y <= TopBound.y )
+
+end
+
 Me.StandardizeTableXY = StandardizeTableXY
 
 return Me
