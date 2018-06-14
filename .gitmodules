@@ -1,3 +1,9 @@
 [submodule "ZonMapLOVE/Lua2DVector"]
 	path = ZonMapLOVE/Lua2DVector
 	url = https://bitbucket.org/weakman54/lua2dvector.git
+[submodule "ZonMapLOVE/flux"]
+	path = ZonMapLOVE/flux
+	url = https://github.com/rxi/flux.git
+[submodule "ZonMapLOVE/lovebird"]
+	path = ZonMapLOVE/lovebird
+	url = https://github.com/rxi/lovebird.git
