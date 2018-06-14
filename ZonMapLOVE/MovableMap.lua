@@ -2,6 +2,8 @@ local Dirty   = require "Dirty"
 local print_r = require "print_r"
 local Conv    = require "BaseStringConverter"
 
+local name = require "module"
+
 
 local MovableMap = { }
 
