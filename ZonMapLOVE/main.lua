@@ -4,6 +4,8 @@ local SideDrawer = require "SideDrawer"
 local MovableMap = require "MovableMap"
 local print_r = require "print_r"
 
+local lovebird = require "lovebird\\lovebird"
+
 
 ButtonRegistration   = {}
 MapZoomLevelTarget   = 1
@@ -39,6 +41,7 @@ Scroll = {x = 0, y = 0}
 MuseText = ""
 
 function love.update(dt)
+    lovebird.update()
 --    flux.update(dt)
 
     MovableMap.update()
