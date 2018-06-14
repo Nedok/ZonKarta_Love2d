@@ -1,0 +1,3 @@
+[submodule "ZonMapLOVE/Lua2DVector"]
+	path = ZonMapLOVE/Lua2DVector
+	url = https://bitbucket.org/weakman54/lua2dvector.git
