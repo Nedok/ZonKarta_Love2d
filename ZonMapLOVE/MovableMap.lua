@@ -1,5 +1,6 @@
-local Dirty = require "Dirty"
+local Dirty   = require "Dirty"
 local print_r = require "print_r"
+local Conv    = require "BaseStringConverter"
 
 
 local MovableMap = { }
@@ -15,27 +16,27 @@ MovableMap.Settings = {
 }
 
 
-function IndexToLetter(Index)
-    local Letters =  {
-        [0]  = "A", [1]  = "B", [2]  = "C", [3]  = "D",
-        [4]  = "E", [5]  = "F", [6]  = "G", [7]  = "H",
-        [8]  = "I", [9]  = "J", [10] = "K", [11] = "L",
-        [12] = "M", [13] = "N", [14] = "O", [15] = "P",
-        [16] = "Q", [17] = "R", [18] = "S", [19] = "T",
-        [20] = "U", [21] = "V", [22] = "W", [23] = "X",
-        [24] = "Y", [25] = "Z"
-    }
-
-    local Str = Index <= 0 and "A" or ""
-
-    while(Index > 0) do
-        --print(Index, (#Letters), Index % (#Letters))
-        Str = Letters[Index % (#Letters)] .. Str
-        Index = math.floor(Index / #Letters)
-    end
-
-    return Str
-end
+-- function IndexToLetter(Index)
+--     local Letters =  {
+--         [0]  = "A", [1]  = "B", [2]  = "C", [3]  = "D",
+--         [4]  = "E", [5]  = "F", [6]  = "G", [7]  = "H",
+--         [8]  = "I", [9]  = "J", [10] = "K", [11] = "L",
+--         [12] = "M", [13] = "N", [14] = "O", [15] = "P",
+--         [16] = "Q", [17] = "R", [18] = "S", [19] = "T",
+--         [20] = "U", [21] = "V", [22] = "W", [23] = "X",
+--         [24] = "Y", [25] = "Z"
+--     }
+--
+--     local Str = Index <= 0 and "A" or ""
+--
+--     while(Index > 0) do
+--         --print(Index, (#Letters), Index % (#Letters))
+--         Str = Letters[Index % (#Letters)] .. Str
+--         Index = math.floor(Index / #Letters)
+--     end
+--
+--     return Str
+-- end
 
 
 
@@ -158,14 +159,14 @@ function MovableMap.mousepressed(x, y, button, isTouch)
     D.x, D.y = math.ceil(D.x), math.floor(D.y)
 
     if Dirty.InRangeXY(D, {x=1, y=0}, MovableMap.GridNumber) then
-        MovableMap.Temp = IndexToLetter(D.y) .. D.x
+        MovableMap.Temp = Conv.Int2Letter(D.y) .. D.x
 
     else
         MovableMap.Temp =""
     end
 
 
-    print(D.x, IndexToLetter(D.y), D.y)
+    print(D.x, Conv.Int2Letter(D.y), D.y)
 
 
 
