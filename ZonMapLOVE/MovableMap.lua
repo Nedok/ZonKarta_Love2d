@@ -1,9 +1,10 @@
-local Dirty   = require "Dirty"
+
 local print_r = require "print_r"
 local Conv    = require "BaseStringConverter"
 
 local Vector = require "Lua2DVector\\Vector"
-
+local _ = require "VectorAddons"
+local _ = require "mathAddons"
 
 
 local MovableMap = { }
@@ -21,41 +22,12 @@ MovableMap.Settings = {
 }
 
 
-function Vector.ConvertSloppy(a)
-    if type(a) == "table" then
-        local NaN = math.nan
-        local Temp = {x = NaN, y = NaN}
-
-        Temp.x = a.x or a.X or a.c or a.C or a[1] or NaN
-        Temp.y = a.y or a.Y or a.r or a.R or a[2] or NaN
-
-        local Err = (Temp.x == NaN and 1 or 0) + (Temp.y == NaN and 2 or 0)
-
-        if Err == 1  then
-            error("I can't convert! Can't find 'x' repressentation. \na = " .. tostring(a) .. "  b = " .. tostring(b))
-        elseif Err == 2  then
-            error("I can't convert! Can't find 'y' repressentation. \na = " .. tostring(a) .. "  b = " .. tostring(b))
-        elseif Err == 3  then
-            error("I can't convert! Can't find eather 'x' and 'y' repressentation. \na = " .. tostring(a) .. "  b = " .. tostring(b))
-        end
-
-        return Vector.new(Temp.x, Temp.y)
-    end
-
-    error("I'm sorry. I don't understand how to convert this. \na = " .. tostring(a) .. "  b = " .. tostring(b))
-end
-
-function Vector:sign()
-    return Vector.new(math.sign(self.x), math.sign(self.y))
-end
-
-
 function MovableMap.load(ImagePath, BoxPixSize, BoxCount)
     MovableMap.GridPixSize = Vector.ConvertSloppy( BoxPixSize or {x=3240/27, y=2514/21} )
     MovableMap.GridNumber  = Vector.ConvertSloppy( BoxCount   or {x=30, y=20} )
 
-    MovableMap.MapImage = love.graphics.newImage("zon.jpg")
-    MovableMap.MapImageSize = Vector(MovableMap.MapImage:getDimensions())
+    MovableMap.MapImage = love.graphics.newImage(ImagePath or "zon.jpg")
+    --MovableMap.MapImageSize = Vector(MovableMap.MapImage:getDimensions())
 end
 
 
@@ -86,9 +58,6 @@ function MovableMap.update()
 
         T.Base = T.Base - T.MouseStart + M
         T.MouseStart = M
-
-        --local Mouse = {love.mouse.getPosition()}
-        --MovableMap.Translate.Base       = Dirty.AddXY(MovableMap.Translate.Base, MovableMap.Translate.MouseStart, Mouse)
     end
 
     -- print(love.timer.getFPS( ))
@@ -110,28 +79,6 @@ function MovableMap.draw()
 
     love.graphics.print("Spot: " .. MovableMap.Temp , 100, 100)
 
-    -- love.graphics.setColor(255,255,255, 0.3)
-    -- love.graphics.draw(
-    -- MovableMap.MapImage,
-    -- MovableMap.Translate.Base.x,
-    -- MovableMap.Translate.Base.y,
-    -- 0,
-    -- MovableMap.Zoom*2,
-    -- MovableMap.Zoom*2
-    -- )
-
-
-    -- love.graphics.setColor(30,30,30)
-
-    -- for k,v in pairs(MovableMap.Spline) do
-    --     love.graphics.line(v.f.x, v.f.y, v.t.x, v.t.y)
-    -- end
-    --
-    -- love.graphics.setColor(255,0,0)
-    -- for k,v in pairs(MovableMap.Temp) do
-    --     love.graphics.rectangle("fill", v.x-4,v.y-4, 9, 9)
-    -- end
-
     love.graphics.setColor(TempColor)
 end
 
@@ -142,11 +89,6 @@ function MovableMap.mousefocus(focus)
     end
 end
 
-function math.sign(n)
-    return n>0 and 1 or n<0 and -1 or 0
-end
-
--- MuseText = ("x: " .. x .. "  y: " .. y .. "  Button: " .. button .. "  IsToutch: " .. tostring(isTouch))
 function MovableMap.mousepressed(x, y, button, isTouch)
 
     local M = MovableMap
@@ -158,41 +100,29 @@ function MovableMap.mousepressed(x, y, button, isTouch)
         return true
     end
 
+    --TODO: Clean this when a feedback function exists for cordinates
+
     local A = T.Base
     local Z = M.Zoom;
 
-    local B = Vector(x,y) - A
-    --local B = Dirty.SubXY({["x"]=x, ["y"]=y}, A)
-
-    --local C = Dirty.DivXY(B, Z)
-    local C = B / Z
+    local B = (Vector(x, y) - A) / Z
 
 
-    print(C.x, C.y)
+    print(B.x, B.y)
 
-    --local D = Dirty.DivXY(C, MovableMap.GridPixSize)
-    local D = C / M.GridPixSize
 
-    D.x, D.y = math.ceil(D.x), math.floor(D.y)
+    local D = (B / M.GridPixSize):floor()
+    D.x = D.x +1
+    --D.x, D.y = math.floor(D.x) + 1, math.floor(D.y)
 
-    if D>= Vector(1,0) and D<= M.GridNumber then
+    if D >= Vector(1, 0) and D <= M.GridNumber then
         M.Temp = Conv.Int2Letter(D.y) .. D.x
     else
         M.Temp = ""
     end
-    --
-    -- if Dirty.InRangeXY(D, {x=1, y=0}, MovableMap.GridNumber) then
-    --     MovableMap.Temp = Conv.Int2Letter(D.y) .. D.x
-    --
-    -- else
-    --     MovableMap.Temp =""
-    -- end
 
 
     print(D.x, Conv.Int2Letter(D.y), D.y)
-
-
-
 
 
     return false
@@ -220,7 +150,8 @@ function MovableMap.wheelmoved( x, y )
         MovableMap.Zoom = MovableMap.Zoom*(1 + math.sign(x + y)*C.ZoomSpeed)
     else
 
-        local Temp = Vector(math.sign(x), math.sign(y)) * C.ScrollSpeed
+        --local Temp = Vector(math.sign(x), math.sign(y)) * C.ScrollSpeed
+        local Temp = Vector(x, y):sign() * C.ScrollSpeed
 
         if love.keyboard.isScancodeDown( "lshift", "rshift" ) then
             -- Changge scroll mode to enable sidescroll with weel
