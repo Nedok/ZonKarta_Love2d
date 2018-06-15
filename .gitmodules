@@ -7,3 +7,6 @@
 [submodule "ZonMapLOVE/lovebird"]
 	path = ZonMapLOVE/lovebird
 	url = https://github.com/rxi/lovebird.git
+[submodule "ZonMapLOVE/suit"]
+	path = ZonMapLOVE/suit
+	url = https://github.com/vrld/suit.git
