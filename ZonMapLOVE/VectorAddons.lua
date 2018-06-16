@@ -30,4 +30,9 @@ function Vector:sign()
     return Vector.new((self.x > 0 and 1 or self.x < 0 and -1 or 0), (self.y > 0 and 1 or self.y < 0 and -1 or 0))
 end
 
+-- Override behavior in vector packet becuse it dosn't make sense
+function Vector.__lt(a, b)
+    return  a.x < b.x and a.y < b.y
+end
+
 return {}
