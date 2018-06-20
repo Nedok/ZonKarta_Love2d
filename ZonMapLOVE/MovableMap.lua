@@ -5,6 +5,9 @@ local Vector = require "Lua2DVector\\Vector"
 local _ = require "VectorAddons"
 local _ = require "mathAddons"
 
+local suit = require "suit"
+ MapGUI = suit.new()
+local Trick = require "suitTrickery"
 
 local MovableMap = { }
 
@@ -31,6 +34,10 @@ end
 
 
 function MovableMap.update()
+
+    if MovableMap.MouseTrack then
+        Trick.SupressInteraction(MapGUI)
+    end
 
     -- Scale to mousepointer or centerscreen
 
@@ -59,6 +66,12 @@ function MovableMap.update()
         T.MouseStart = M
     end
 
+    -- GUI
+    local A = Vector(love.graphics.getDimensions())
+
+    A = A- Vector(50,50)
+    MapGUI:Button("Reset Zoom", A.x, A.y, 40, 40)
+
     -- print(love.timer.getFPS( ))
 end
 
@@ -78,6 +91,7 @@ function MovableMap.draw()
 
     love.graphics.print("Spot: " .. MovableMap.Temp , 100, 100)
 
+    MapGUI:draw()
     love.graphics.setColor(TempColor)
 end
 
@@ -88,19 +102,9 @@ function MovableMap.mousefocus(focus)
     end
 end
 
-function MovableMap.mousepressed(x, y, button, isTouch)
-
-    local M = MovableMap
-    local T = MovableMap.Translate
-
-    if ( not M.MouseTrack ) and ( button == 2 or button == 3 ) then
-        M.MouseTrack = button
-        T.MouseStart = Vector(love.mouse.getPosition())
-        return true
-    end
+function GetClickCordinate()
 
     --TODO: Clean this when a feedback function exists for cordinates
-
     local A = T.Base
     local Z = M.Zoom;
 
@@ -122,9 +126,19 @@ function MovableMap.mousepressed(x, y, button, isTouch)
 
 
     print(D.x, Conv.Int2Letter(D.y), D.y)
+end
 
+function MovableMap.mousepressed(x, y, button, isTouch)
 
-    return false
+    local M = MovableMap
+    local T = MovableMap.Translate
+
+    if ( not M.MouseTrack ) and ( button == 2 or button == 3 ) then
+        M.MouseTrack = button
+        T.MouseStart = Vector(love.mouse.getPosition())
+        return true
+    end
+
 end
 
 function MovableMap.mousereleased(x, y, button, isTouch)
@@ -134,7 +148,14 @@ function MovableMap.mousereleased(x, y, button, isTouch)
     end
 end
 
-function StopMouseMovment()
+
+function StartMapMovment(TrackingButton)
+    M.MouseTrack = button
+    T.MouseStart = Vector(love.mouse.getPosition())
+end
+
+
+function StopMapMovment()
     MovableMap.MouseTrack = nil
     MovableMap.Translate.MouseStart = Vector(0, 0)
 end

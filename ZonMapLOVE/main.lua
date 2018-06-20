@@ -6,7 +6,7 @@ suit             = require "suit"
 Trick            = require "suitTrickery"
 
 
---local lovebird = require "lovebird\\lovebird"
+local lovebird = require "lovebird\\lovebird"
 
 
 -- Configs --
@@ -30,12 +30,12 @@ function love.load()
 end
 
 MuseText = ""
-A ={}
+A = {}
 
 
 
 function love.update(dt)
-    --lovebird.update()
+    lovebird.update()
     --    flux.update(dt)
 
     MovableMap.update()
@@ -55,18 +55,10 @@ function love.update(dt)
     if A.hit then
         print("logging")
     end
-    suit.hovered = nil
-
-    --print(suit.anyActive(), suit.anyHovered(), suit.anyHit() )
-
-
 
 
 end
 
-function Disable()
-    return false
-end
 
 function love.draw()
     MovableMap.draw()
@@ -74,6 +66,7 @@ function love.draw()
     if SideBar.Enabled then
         love.graphics.setColor(0, 0, 0, 0.9)
         love.graphics.rectangle("fill", 0,0, SideBar.xExpansion, love.graphics.getHeight())
+        suit.draw()
     end
 
 
